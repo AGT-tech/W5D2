@@ -3,18 +3,19 @@ from typing import List
 
 @dataclass(frozen=True)
 class OrderItem:
-  product_id: str
-  Quantity: int
-  price_per_unit: float
-
-  def total_price(self) -> float:
-      return self.quantity * self.price_per_unit
+    name: str
+    quantity: int
+    price: float
+    def line_total(self) -> float:
+        return self.quantity * self.price
 
 @dataclass
 class Order:
-  id: str
-  items:List(orderItem)
-  status: str = "OPEN"
-  def total(self) ->float:
-    return sum(item.line_total() for item in self.items)
-    return sum(item.total_price() for item in self.items)
+    id: str
+    items: List[OrderItem] = field(default_factory=list)
+    status: str = "OPEN"  # OPEN/CANCELED/COMPLETED
+    def total(self) -> float:
+        return sum(item.line_total() for item in self.items)
+    def cancel(self) -> None:
+        if self.status != "CANCELED":
+            self.status = "CANCELED"
